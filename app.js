@@ -59,9 +59,10 @@ app.post("/register", async (request, response) => {
   }
 });
 
-// change PassWord
+//PUT change PassWord
 app.put("/change-password", async (request, response) => {
   const { username, oldPassword, newPassword } = request.body;
+  console.log(username, oldPassword, newPassword)
   const checkInitialQuery = `
   SELECT * FROM user WHERE username = '${username}' 
   `;

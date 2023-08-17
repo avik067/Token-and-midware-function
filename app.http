@@ -55,7 +55,7 @@ Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNocm
 
 ###
 
-POST http://localhost:3002/change-password
+PUT http://localhost:3002/change-password
 Content-Type: application/json
 
 {
