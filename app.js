@@ -18,8 +18,8 @@ const initializeDBAndServer = async () => {
       filename: dbPath,
       driver: sqlite3.Database,
     });
-    app.listen(3000, () => {
-      console.log("Server Running at http://localhost:3000/");
+    app.listen(3002, () => {
+      console.log("Server Running at http://localhost:3002/");
     });
   } catch (e) {
     console.log(`DB Error: ${e.message}`);
@@ -27,6 +27,72 @@ const initializeDBAndServer = async () => {
   }
 };
 initializeDBAndServer();
+
+// Register
+
+app.post("/register", async (request, response) => {
+  const { username, name, password, gender, location } = request.body;
+  const hashedPass = await bcrypt.hash(password, 10);
+  const initialQuery = `SELECT * FROM user WHERE username = '${username}'`;
+  const dbUser = await db.get(initialQuery);
+
+  if (dbUser === undefined) {
+    if (password.length >= 5) {
+      const createUserQ = `INSERT INTO user(username, name, password, gender, location) 
+                  VALUES (
+                     '${username}', '${name}' , '${hashedPass}' ,'${gender}' , '${location}'
+                  ) 
+      `;
+
+      const dbResp = await db.run(createUserQ);
+
+      const newUserId = dbResp.lastID;
+      response.status(200);
+      response.send("User created successfully");
+    } else {
+      response.status(400);
+      response.send("Password is too short");
+    }
+  } else {
+    response.status(400);
+    response.send("User already exists");
+  }
+});
+
+// change PassWord
+app.put("/change-password", async (request, response) => {
+  const { username, oldPassword, newPassword } = request.body;
+  const checkInitialQuery = `
+  SELECT * FROM user WHERE username = '${username}' 
+  `;
+  const dbUser = await db.get(checkInitialQuery);
+  if (dbUser === undefined) {
+    response.status(400);
+    response.send("User not registered");
+  } else {
+    const isMatched = await bcrypt.compare(oldPassword, dbUser.password);
+    if (isMatched === true) {
+      const lengthNew = newPassword.length;
+      if (lengthNew < 5) {
+        response.status(400);
+        response.send("Password is too short");
+      } else {
+        const encrypted = await bcrypt.hash(newPassword, 10);
+        const updateQuer = `
+              UPDATE user 
+              SET password = '${encrypted}'
+              WHERE username = '${username}' 
+              `;
+        await db.run(updateQuer);
+        response.status(200);
+        response.send("Password updated");
+      }
+    } else {
+      response.status(400);
+      response.send("Invalid current password");
+    }
+  }
+});
 
 // POST 1
 
@@ -96,7 +162,7 @@ app.get("/states/", verifyToken, async (request, response) => {
 // GET
 app.get("/states/:stateId/", verifyToken, async (request, response) => {
   const { stateId } = request.params;
-  const { username } = request;
+  
   const finalQuery = `
                             SELECT state_id AS stateId ,
                                     state_name AS stateName ,
@@ -158,7 +224,7 @@ app.get("/districts/:districtId/", verifyToken, async (request, response) => {
   response.send(result);
 });
 
-// DE l
+// DEl
 app.delete(
   "/districts/:districtId/",
   verifyToken,
