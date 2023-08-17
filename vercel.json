@@ -1,6 +1,6 @@
 {
     "version": 2,
     "name": "covid19-portal",
-    "builds": [{ "src": "app.js", "use": "@vercel/node" }],
-    "routes": [{ "src": "/(.*)", "dest": "/app.js" }]
+    "builds": [{ "src": "server.js", "use": "@vercel/node" }],
+    "routes": [{ "src": "/(.*)", "dest": "/server.js" }]
   }
