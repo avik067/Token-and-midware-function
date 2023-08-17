@@ -1,20 +1,25 @@
-const express = require("express"); //1
-const path = require("path"); //2
-const { open } = require("sqlite"); //3
-const sqlite3 = require("sqlite3"); //4
+const express = require("express"); // 1
+const path = require("path"); // 2
+const { open } = require("sqlite"); // 3
+const sqlite3 = require("sqlite3"); // 4
 const bcrypt = require("bcrypt"); // 5
 const jwt = require("jsonwebtoken"); // 6
+const cors = require('cors')
+
 
 const app = express(); // we are saving a instance of express inside this app //
+
+app.use(cors())
+
 app.use(express.json()); // midware function //
 
-const dbPath = path.join(__dirname, "covid19IndiaPortal.db");
+const dbPath = path.join(__dirname, "covid19IndiaPortal.db"); // __dirname curret path 
 
 let db = null;
 
 const initializeDBAndServer = async () => {
   try {
-    db = await open({
+    db = await open({  // openning with open mehod of sqlite a new DB to the located path  
       filename: dbPath,
       driver: sqlite3.Database,
     });
