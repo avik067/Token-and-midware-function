@@ -39,7 +39,31 @@ app.get("/" , async (request, response) => {
   response.status(200);
   response.send("Hi , Live !!");
 });
-
+ ////////////////////////
+const verifyToken = (request, response, next) => {
+  console.log("hi");
+  const tokenH = request.headers["authorization"];
+  let jwtT;
+  if (tokenH !== undefined) {
+    jwtT = tokenH.split(" ")[1];
+  }
+  if (jwtT === undefined) {
+    response.status(401);
+    response.send("Invalid JWT Token");
+  } else {
+    jwt.verify(jwtT, "SECRET", async (error, payload) => {
+      if (error) {
+        response.status(401);
+        response.send("Invalid JWT Token");
+      } else {
+        console.log("verification successful");
+        request.username = payload.username;
+        next();
+      }
+    });
+  }
+};
+ ///// //////////////////
 // GET
 app.get("/states/:stateId/", verifyToken, async (request, response) => {
   const { stateId } = request.params;
@@ -152,29 +176,7 @@ app.post("/login/", async (request, response) => {
   }
 });
 
-const verifyToken = (request, response, next) => {
-  console.log("hi");
-  const tokenH = request.headers["authorization"];
-  let jwtT;
-  if (tokenH !== undefined) {
-    jwtT = tokenH.split(" ")[1];
-  }
-  if (jwtT === undefined) {
-    response.status(401);
-    response.send("Invalid JWT Token");
-  } else {
-    jwt.verify(jwtT, "SECRET", async (error, payload) => {
-      if (error) {
-        response.status(401);
-        response.send("Invalid JWT Token");
-      } else {
-        console.log("verification successful");
-        request.username = payload.username;
-        next();
-      }
-    });
-  }
-};
+
 
 // GET
 app.get("/states/", verifyToken, async (request, response) => {
