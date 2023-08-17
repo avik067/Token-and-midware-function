@@ -33,6 +33,32 @@ const initializeDBAndServer = async () => {
 };
 initializeDBAndServer();
 
+// Welcome
+
+app.get("/" async (request, response) => {
+  response.status(200);
+  response.send("Hi , Live !!");
+});
+
+// GET
+app.get("/states/:stateId/", verifyToken, async (request, response) => {
+  const { stateId } = request.params;
+  
+  const finalQuery = `
+                            SELECT state_id AS stateId ,
+                                    state_name AS stateName ,
+                                    population AS population 
+                            FROM state 
+                            WHERE state_id = '${stateId}' ;
+                           
+    `;
+  const finalResultA = await db.get(finalQuery);
+  response.status(200);
+  response.send(finalResultA);
+});
+
+
+
 // Register
 
 app.post("/register", async (request, response) => {
