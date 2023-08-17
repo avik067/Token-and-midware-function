@@ -35,7 +35,7 @@ initializeDBAndServer();
 
 // Welcome
 
-app.get("/" async (request, response) => {
+app.get("/" , async (request, response) => {
   response.status(200);
   response.send("Hi , Live !!");
 });
