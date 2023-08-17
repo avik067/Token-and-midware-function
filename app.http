@@ -18,7 +18,7 @@ Content-Type: application/json
 
 {
   "username": "adam_rich",
-  "password": "rich@2021"
+  "password": "rich@2023"
 }
 
 ####
@@ -60,6 +60,6 @@ Content-Type: application/json
 
 {
   "username": "adam_rich",
-  "oldPassword": "rich@2021",
-  "newPassword": "rich@2022"
+  "oldPassword": "rich@2022",
+  "newPassword": "rich@2023"
 }
